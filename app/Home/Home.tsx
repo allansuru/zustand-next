@@ -8,12 +8,13 @@ import { ApiResponse } from '../core/interfaces/api-response';
 import Loading from '../core/components/Loading';
 import CardList from './Home-Cards';
 import HomeSearch from './Home-Search';
+import Navbar from '../core/components/Navbar';
 
 
 const Home: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const { characters, setCharacters, toggleFavorite } = useCharacterStore();
-  const [searchTerm, setSearchTerm] = useState<string>(''); 
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   const fetchData = async () => {
     try {
@@ -23,14 +24,18 @@ const Home: React.FC = () => {
       setCharacters(results || []);
     } catch (error) {
       console.error(error);
-    }finally {
+    } finally {
       setLoading(false);
     }
   };
   useEffect(() => {
-  
+    if (!characters || characters.length === 0) {
+      fetchData();
+    } else {
+      setLoading(false)
+    }
 
-    fetchData();
+ 
   }, [setCharacters]);
 
   const handleToggleFavorite = (characterId: number) => {
@@ -38,7 +43,7 @@ const Home: React.FC = () => {
   };
 
   const handleSearchInputChange = (term: string) => {
-    setSearchTerm(term); 
+    setSearchTerm(term);
   };
 
   const handleSearchClick = async () => {
@@ -47,31 +52,36 @@ const Home: React.FC = () => {
       setLoading(true);
       try {
         const { results } = await httpApi.getByParams<any>('character', { name: searchTerm });
-        setCharacters(results); 
+        setCharacters(results);
       } catch (error) {
         console.error('Erro ao buscar personagens:', error);
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     } else {
       fetchData();
     }
-   
+
   };
 
 
   return (
-    <div className="container mx-auto px-4">
-           <HomeSearch
-        onSearchInputChange={handleSearchInputChange}
-        onSearchClick={handleSearchClick}
-      />
-      {loading ? (
-        <Loading />
-      ) : (
-        <CardList data={characters} toggleFavorite={handleToggleFavorite} />
-      )}
-    </div>
+    <>
+      <Navbar />
+      <div className="container mx-auto px-4">
+        <div className="pt-2">
+          <HomeSearch
+            onSearchInputChange={handleSearchInputChange}
+            onSearchClick={handleSearchClick}
+          />
+        </div>
+        {loading ? (
+          <Loading />
+        ) : (
+          <CardList data={characters} toggleFavorite={handleToggleFavorite} />
+        )}
+      </div>
+    </>
   );
 
 };
