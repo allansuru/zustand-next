@@ -15,9 +15,10 @@ const handleError = (error: any): Promise<never> => {
 const get = async <T>(endPointUrl: string, payload: Record<string, any> = {}): Promise<T | undefined> => {
   const params = queryString.stringify(payload, { skipNull: true });
 
-  try {
   
-    const response= await axios.get<T>(`${baseURL}/${endPointUrl}`, {
+  try {
+
+    const response = await axios.get<T>(`${baseURL}/${endPointUrl}`, {
       params,
     });
     return response.data;
@@ -26,12 +27,27 @@ const get = async <T>(endPointUrl: string, payload: Record<string, any> = {}): P
   }
 };
 
-const getById = async <T>(endPointUrl: string, id: number): Promise<T | undefined> => {
- 
+const getByParams = async <T>(endPointUrl: string, payload: Record<string, any> = {}): Promise<T | undefined> => {
+  const params = queryString.stringify(payload, { skipNull: true });
+
+  const url = `${baseURL}/${endPointUrl}/?${params}`
 
   try {
-  
-    const response= await axios.get<T>(`${baseURL}/${endPointUrl}/${id}`);
+
+    const response = await axios.get<T>(`${url}`,
+    );
+    return response.data;
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+const getById = async <T>(endPointUrl: string, id: number): Promise<T | undefined> => {
+
+
+  try {
+
+    const response = await axios.get<T>(`${baseURL}/${endPointUrl}/${id}`);
     return response.data;
   } catch (error) {
     handleError(error);
@@ -40,5 +56,6 @@ const getById = async <T>(endPointUrl: string, id: number): Promise<T | undefine
 
 export const httpApi = {
   get,
-  getById
+  getById,
+  getByParams
 };

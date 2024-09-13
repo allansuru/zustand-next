@@ -7,25 +7,28 @@ import { useCharacterStore } from './shared/store/characterStore';
 import { ApiResponse } from '../core/interfaces/api-response';
 import Loading from '../core/components/Loading';
 import CardList from './Home-Cards';
+import HomeSearch from './Home-Search';
 
 
 const Home: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const { characters, setCharacters, toggleFavorite } = useCharacterStore();
+  const [searchTerm, setSearchTerm] = useState<string>(''); 
 
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await httpApi.get<ApiResponse<Character>>('character');
+      const results = response?.results || [];
+      setCharacters(results || []);
+    } catch (error) {
+      console.error(error);
+    }finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const response = await httpApi.get<ApiResponse<Character>>('character');
-        const results = response?.results || [];
-        setCharacters(results || []);
-      } catch (error) {
-        console.error(error);
-      }finally {
-        setLoading(false);
-      }
-    };
+  
 
     fetchData();
   }, [setCharacters]);
@@ -34,9 +37,35 @@ const Home: React.FC = () => {
     toggleFavorite(characterId);
   };
 
+  const handleSearchInputChange = (term: string) => {
+    setSearchTerm(term); 
+  };
+
+  const handleSearchClick = async () => {
+    if (searchTerm.trim()) {
+
+      setLoading(true);
+      try {
+        const { results } = await httpApi.getByParams<any>('character', { name: searchTerm });
+        setCharacters(results); 
+      } catch (error) {
+        console.error('Erro ao buscar personagens:', error);
+      } finally {
+        setLoading(false); 
+      }
+    } else {
+      fetchData();
+    }
+   
+  };
+
+
   return (
     <div className="container mx-auto px-4">
-      <h1 className="text-3xl font-bold my-8">Character List</h1>
+           <HomeSearch
+        onSearchInputChange={handleSearchInputChange}
+        onSearchClick={handleSearchClick}
+      />
       {loading ? (
         <Loading />
       ) : (
