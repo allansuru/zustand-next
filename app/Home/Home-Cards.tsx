@@ -7,15 +7,20 @@ import { faHeart } from '@fortawesome/free-solid-svg-icons'; // Ícone de coraç
 interface CardListProps {
     data: Character[];
     toggleFavorite: (characterId: number) => void;
+    onCardClick: (name: string) => void; 
 }
 
-const CardList: React.FC<CardListProps> = ({ data, toggleFavorite }) => {
+const CardList: React.FC<CardListProps> = ({ data, toggleFavorite, onCardClick }) => {
     return (
         <div className="flex flex-wrap justify-start">
             {data && data.length > 0 ? (
                 data.map((character) => (
-                    <div key={character.id} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-4">
-                        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div
+                        key={character.id}
+                        className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-4 cursor-pointer transform transition-transform duration-300 hover:scale-105 hover:rotate-1"
+                        onClick={() => onCardClick(character.name)}
+                    >
+                        <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                             <div className="relative">
                                 <img
                                     src={character.image}
@@ -24,7 +29,10 @@ const CardList: React.FC<CardListProps> = ({ data, toggleFavorite }) => {
                                 />
                                 <button
                                     className="absolute top-2 right-2 p-2 rounded-full focus:outline-none"
-                                    onClick={() => toggleFavorite(character.id)} 
+                                    onClick={(event) => {
+                                        event.stopPropagation(); // Previne que o clique no botão dispare o onClick do card
+                                        toggleFavorite(character.id);
+                                    }}
                                 >
                                     <FontAwesomeIcon
                                         icon={faHeart}
@@ -49,5 +57,6 @@ const CardList: React.FC<CardListProps> = ({ data, toggleFavorite }) => {
         </div>
     );
 };
+
 
 export default CardList;
