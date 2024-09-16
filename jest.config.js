@@ -1,9 +1,12 @@
+// jest.config.js
 module.exports = {
+    preset: 'ts-jest',
     testEnvironment: 'jsdom',
-    testPathIgnorePatterns:['/node_modules/', '/.next/'],
-    collectCoverage: true,
-    collectCoverageFrom: ['src/**/*.ts(x)'],
     setupFilesAfterEnv: ['<rootDir>/setupTests.ts'],
-
-
-}
+    transform: {
+      '^.+\\.(ts|tsx)$': 'ts-jest',
+      '^.+\\.(js|jsx)$': 'babel-jest',
+    },
+    moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  };
+  
