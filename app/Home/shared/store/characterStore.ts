@@ -1,7 +1,6 @@
-
-import { Character } from '@/app/Home/shared/interfaces/character';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware'
+import { Character } from '../interfaces/character';
 
 
 

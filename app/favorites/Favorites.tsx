@@ -14,9 +14,10 @@ const Favorites: React.FC = () => {
       <Navbar /> {/* Adiciona o Navbar */}
       <div className="container mx-auto p-4">
         <h1 className="text-2xl font-bold mb-4">Meus Favoritos</h1>
-        
+
         {favoriteCharacters.length > 0 ? (
-          <CardList data={favoriteCharacters} toggleFavorite={toggleFavorite} />
+          <CardList data={favoriteCharacters} toggleFavorite={toggleFavorite} onCardClick={() => { }} // Mock implementation
+          />
         ) : (
           <p className="text-gray-500">Nenhum personagem favoritado ainda.</p>
         )}
